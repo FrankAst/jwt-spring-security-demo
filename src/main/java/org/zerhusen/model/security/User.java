@@ -3,24 +3,12 @@ package org.zerhusen.model.security;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-@Entity
-@Table(name = "USER")
+@Entity(name = "USER")
+@Table(name = "user")
 public class User {
 
     @Id
@@ -30,37 +18,37 @@ public class User {
     private Long id;
 
     @Column(name = "USERNAME", length = 50, unique = true)
-    @NotNull
+//    @NotNull
     @Size(min = 4, max = 50)
     private String username;
 
     @Column(name = "PASSWORD", length = 100)
-    @NotNull
+//    @NotNull
     @Size(min = 4, max = 100)
     private String password;
 
     @Column(name = "FIRSTNAME", length = 50)
-    @NotNull
+//    @NotNull
     @Size(min = 4, max = 50)
     private String firstname;
 
     @Column(name = "LASTNAME", length = 50)
-    @NotNull
+//    @NotNull
     @Size(min = 4, max = 50)
     private String lastname;
 
     @Column(name = "EMAIL", length = 50)
-    @NotNull
+//    @NotNull
     @Size(min = 4, max = 50)
     private String email;
 
     @Column(name = "ENABLED")
-    @NotNull
+//    @NotNull
     private Boolean enabled;
 
     @Column(name = "LASTPASSWORDRESETDATE")
     @Temporal(TemporalType.TIMESTAMP)
-    @NotNull
+//    @NotNull
     private Date lastPasswordResetDate;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -69,6 +57,13 @@ public class User {
             joinColumns = {@JoinColumn(name = "USER_ID", referencedColumnName = "ID")},
             inverseJoinColumns = {@JoinColumn(name = "AUTHORITY_ID", referencedColumnName = "ID")})
     private List<Authority> authorities;
+
+    @OneToMany(
+        mappedBy = "user",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    private List<Note> notes;
 
     public Long getId() {
         return id;
@@ -92,6 +87,15 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public List<Note> getNotes() {
+        return notes;
+    }
+
+    public void addNote(Note note) {
+        this.notes.add(note);
+        note.setUser(this);
     }
 
     public String getFirstname() {
