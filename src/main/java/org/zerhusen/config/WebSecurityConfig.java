@@ -16,10 +16,15 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.zerhusen.security.JwtAuthenticationEntryPoint;
 import org.zerhusen.security.JwtAuthorizationTokenFilter;
 import org.zerhusen.security.JwtTokenUtil;
 import org.zerhusen.security.service.JwtUserDetailsService;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -62,16 +67,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
+            .cors().and()
             // we don't need CSRF because our token is invulnerable
             .csrf().disable()
-
             .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-
             // don't create session
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-
             .authorizeRequests()
-
             // Un-secure H2 Database
             .antMatchers("/h2-console/**/**").permitAll()
 
@@ -90,14 +92,26 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .cacheControl();
     }
 
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("*"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "x-auth-token"));
+        configuration.setExposedHeaders(Arrays.asList("x-auth-token"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+
     @Override
     public void configure(WebSecurity web) throws Exception {
         // AuthenticationTokenFilter will ignore the below paths
         web
             .ignoring()
             .antMatchers(
-                HttpMethod.POST,
-                authenticationPath
+                HttpMethod.OPTIONS,
+                "/**"
             )
 
             // allow anonymous resource requests
