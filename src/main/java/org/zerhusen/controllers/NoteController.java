@@ -36,6 +36,7 @@ public class NoteController {
     @Autowired
     private UserRepository userRepository;
 
+    @CrossOrigin
     @GetMapping("/notes")
     public List<Note> getAllNotes(@RequestHeader(value = "Authorization") String tk) {
         String token = tk.substring(7);
@@ -44,6 +45,7 @@ public class NoteController {
         return user.getNotes();
     }
 
+    @CrossOrigin
     @PostMapping("/notes")
     public Note createNote(@Valid @RequestBody Note note, @RequestHeader(value = "Authorization") String tk) {
         String token = tk.substring(7);
@@ -54,6 +56,7 @@ public class NoteController {
         return noteService.add(note);
     }
 
+    @CrossOrigin
     @PutMapping("/notes/{id}")
     public Note updateNote(@PathVariable(value = "id") Long noteId, @Valid @RequestBody Note noteDetails, @RequestHeader(value = "Authorization") String tk) {
         String token = tk.substring(7);
@@ -67,6 +70,7 @@ public class NoteController {
     }
 
 
+    @CrossOrigin
     @DeleteMapping("/notes/{id}")
     public Boolean getNoteById(@PathVariable(value = "id") Long noteId, @RequestHeader(value = "Authorization") String tk) {
         String token = tk.substring(7);
