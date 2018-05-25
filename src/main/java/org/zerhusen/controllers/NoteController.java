@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 
-
+@CrossOrigin
 @RestController
 public class NoteController {
 
