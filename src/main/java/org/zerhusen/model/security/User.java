@@ -59,7 +59,6 @@ public class User {
     private List<Authority> authorities;
 
     @OneToMany(
-        mappedBy = "user",
         cascade = CascadeType.ALL,
         orphanRemoval = true
     )
@@ -95,7 +94,24 @@ public class User {
 
     public void addNote(Note note) {
         this.notes.add(note);
-        note.setUser(this);
+    }
+
+    public void deleteNote(Long noteId) {
+        for (int i = 0; i < this.notes.size(); i++) {
+            if(this.notes.get(i).getId() == noteId){
+                this.notes.remove(i);
+            }
+        }
+    }
+
+    public void updateNote(Note note) {
+        for (int i = 0; i < this.notes.size(); i++) {
+            if(this.notes.get(i).getId() == note.getId()){
+                this.notes.get(i).setTitle(note.getTitle());
+                this.notes.get(i).setText(note.getText());
+            }
+        }
+
     }
 
     public String getFirstname() {

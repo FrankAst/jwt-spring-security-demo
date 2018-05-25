@@ -1,5 +1,7 @@
 package org.zerhusen.model.security;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -10,7 +12,7 @@ public class Note {
     @Id
     @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "note_seq")
-    @SequenceGenerator(name = "note_seq", sequenceName = "note_seq", allocationSize = 1)
+    @SequenceGenerator(name = "note_seq", sequenceName = "note_seq", allocationSize = 0)
     private Long id;
 
     @Column(name = "TITLE")
@@ -26,9 +28,9 @@ public class Note {
 //    @Size(min = 4, max = 50)
 //    private String date;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
-    private User user;
+//    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    @JoinColumn(name = "user_id")
+//    private User user;
 
     public Long getId() {
         return id;
@@ -58,11 +60,11 @@ public class Note {
 //        return date;
 //    }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
+//    public User getUser() {
+//        return user;
+//    }
+//
+//    public void setUser(User user) {
+//        this.user = user;
+//    }
 }

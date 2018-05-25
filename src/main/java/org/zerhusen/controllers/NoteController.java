@@ -45,33 +45,35 @@ public class NoteController {
     }
 
     @PostMapping("/notes")
-    public Note createNote(@Valid @RequestBody Note note, @RequestHeader(value = "Authorization") String tk) throws Exception {
+    public Note createNote(@Valid @RequestBody Note note, @RequestHeader(value = "Authorization") String tk) {
         String token = tk.substring(7);
         String username = jwtTokenUtil.getUsernameFromToken(token);
         User user = userRepository.findByUsername(username);
-        note.setUser(user);
         user.addNote(note);
         userRepository.saveAndFlush(user);
         return noteService.add(note);
     }
 
-//    @PutMapping("/notes")
-//    public Note updateNote(@PathVariable(value = "id") Long noteId, @Valid @RequestBody Note noteDetails) {
-//
-//        Note note = noteService.get(noteId);
-//
-//        note.setTitle(noteDetails.getTitle());
-//        note.setText(noteDetails.getText());
-//
-//        Note updatedNote = noteService.update(note);
-//        return updatedNote;
-//
-//    }
-//
-//
-//    @DeleteMapping("/notes/{id}")
-//    public Boolean getNoteById(@PathVariable(value = "id") Long noteId) {
-//        noteService.delete(noteId);
-//        return true;
-//    }
+    @PutMapping("/notes/{id}")
+    public Note updateNote(@PathVariable(value = "id") Long noteId, @Valid @RequestBody Note noteDetails, @RequestHeader(value = "Authorization") String tk) {
+        String token = tk.substring(7);
+        String username = jwtTokenUtil.getUsernameFromToken(token);
+        User user = userRepository.findByUsername(username);
+        Note note = noteService.get(noteId);
+        note.setTitle(noteDetails.getTitle());
+        note.setText(noteDetails.getText());
+        user.updateNote(note);
+        return noteService.update(note);
+    }
+
+
+    @DeleteMapping("/notes/{id}")
+    public Boolean getNoteById(@PathVariable(value = "id") Long noteId, @RequestHeader(value = "Authorization") String tk) {
+        String token = tk.substring(7);
+        String username = jwtTokenUtil.getUsernameFromToken(token);
+        User user = userRepository.findByUsername(username);
+        user.deleteNote(noteId);
+        noteService.delete(noteId);
+        return true;
+    }
 }

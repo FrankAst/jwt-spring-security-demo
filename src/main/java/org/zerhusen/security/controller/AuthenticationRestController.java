@@ -20,8 +20,8 @@ import org.zerhusen.security.JwtTokenUtil;
 import org.zerhusen.security.JwtUser;
 import org.zerhusen.security.service.JwtAuthenticationResponse;
 
-@RestController
 @CrossOrigin(origins = "*")
+@RestController
 public class AuthenticationRestController {
 
     @Value("${jwt.header}")
@@ -40,6 +40,8 @@ public class AuthenticationRestController {
     @RequestMapping(value = "${jwt.route.authentication.path}", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest) throws AuthenticationException {
 
+        System.out.println("==================================================");
+        System.out.println(authenticationRequest.getUsername() + " ============" + authenticationRequest.getPassword());
         authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
 
         // Reload password post-security so we can generate the token
